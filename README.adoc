@@ -340,3 +340,5 @@ If you need to add `ignoredClassPatterns` or `ignoredResourcePatterns` to your s
 
 ----
 
+
+
