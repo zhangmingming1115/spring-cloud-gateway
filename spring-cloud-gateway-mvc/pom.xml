@@ -15,6 +15,12 @@
 		<relativePath>..</relativePath>
 	</parent>
 
+	<!--
+	定位：基于 Spring MVC（同步）的网关实现（新特性）
+作用：提供了兼容 Spring MVC 的网关实现，支持非响应式项目使用 Gateway，与 spring-cloud-gateway-webflux 是两种不同的实现。
+学习价值：对比 WebFlux 与 MVC 两种实现的差异，理解 Spring 的多范式支持。
+	-->
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

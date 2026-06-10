@@ -20,6 +20,16 @@
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
 	</properties>
+
+	<!--
+
+	定位：对外提供的 starter 模块（用户项目直接引入的依赖）
+作用：封装了 Gateway 的核心依赖，用户只需引入 spring-cloud-starter-gateway 即可快速接入网关，无需手动引入其他子模块。
+学习价值：看它的 pom.xml，就能知道网关需要哪些核心依赖，理解 “starter 封装思想”。
+
+	-->
+
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>

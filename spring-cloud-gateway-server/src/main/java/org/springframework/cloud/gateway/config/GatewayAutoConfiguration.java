@@ -1,19 +1,3 @@
-/*
- * Copyright 2013-2020 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.springframework.cloud.gateway.config;
 
 import java.net.InetSocketAddress;
@@ -176,12 +160,22 @@ import org.springframework.web.reactive.socket.server.upgrade.ReactorNettyReques
  * @author Mete Alpaslan Katırcıoğlu
  * @author Alberto C. Ríos
  */
+
+/**
+ *
+ * @EnableConfigurationProperties = 让配置类（@ConfigurationProperties）生效，把配置注入 Spring 容器
+ * 它的使命只有一个：
+ * 把 application.yml/application.properties 里的配置，自动读出来，绑定到 Java 类里，并交给 Spring 管理。
+ *
+ */
+
+
+
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = "spring.cloud.gateway.enabled", matchIfMissing = true)
 @EnableConfigurationProperties
 @AutoConfigureBefore({ HttpHandlerAutoConfiguration.class, WebFluxAutoConfiguration.class })
-@AutoConfigureAfter({ GatewayReactiveLoadBalancerClientAutoConfiguration.class,
-		GatewayClassPathWarningAutoConfiguration.class })
+@AutoConfigureAfter({ GatewayReactiveLoadBalancerClientAutoConfiguration.class, GatewayClassPathWarningAutoConfiguration.class })
 @ConditionalOnClass(DispatcherHandler.class)
 public class GatewayAutoConfiguration {
 

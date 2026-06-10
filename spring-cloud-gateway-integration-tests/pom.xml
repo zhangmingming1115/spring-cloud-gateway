@@ -13,6 +13,12 @@
 	<properties>
 	</properties>
 
+	<!--
+	定位：集成测试模块
+	作用：包含网关的端到端测试用例，验证网关与服务发现、负载均衡、安全组件等的集成功能。
+	学习价值：参考测试用例的写法，学习如何用 WebTestClient 测试网关路由。
+	-->
+
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-gateway</artifactId>

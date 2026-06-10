@@ -19,6 +19,17 @@
 		<grpc.version>1.47.1</grpc.version>
 	</properties>
 
+	<!--
+
+	定位：网关服务的自动配置与启动模块
+作用：包含 GatewayAutoConfiguration 等自动配置类，负责：
+路由定义加载（配置文件 / Java 代码）
+过滤器工厂注册
+网关上下文初始化
+学习价值：看它的 spring.factories（或新版自动配置文件），理解网关的启动流程。
+
+	-->
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

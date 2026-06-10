@@ -15,6 +15,18 @@
 		<relativePath>..</relativePath>
 	</parent>
 
+	<!--
+
+	定位：基于 WebFlux（响应式）的核心实现模块
+作用：实现了响应式网关的核心逻辑，包括：
+路由匹配（Predicate）
+过滤器链（Filter）
+请求转发（Reactor Netty）
+异步非阻塞处理
+学习价值：这是 Gateway 最核心的模块，RoutePredicateHandlerMapping、FilteringWebHandler 等核心类都在这里。
+
+	-->
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

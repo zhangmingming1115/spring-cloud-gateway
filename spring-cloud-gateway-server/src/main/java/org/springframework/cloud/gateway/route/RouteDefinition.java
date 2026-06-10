@@ -1,19 +1,3 @@
-/*
- * Copyright 2013-2020 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.springframework.cloud.gateway.route;
 
 import java.net.URI;
@@ -36,19 +20,51 @@ import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
 /**
  * @author Spencer Gibb
+ *
+ * 一下是 的 yaml 的配置
+ *   cloud:
+ *     # Spring Cloud Gateway 配置项，对应 GatewayProperties 类
+ *     gateway:
+ *       # 路由配置项，对应 RouteDefinition 数组
+ *       routes:
+ *         ## system-server 服务
+ *         - id: system-admin-api # 路由的编号
+ *           uri: grayLb://system-server
+ *           predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
+ *             - Path=/admin-api/system/**
+ *           filters:
+ *               - RewritePath=/admin-api/system/v3/api-docs, /v3/api-docs # 配置，保证转发到 /v3/api-docs
+ *         - id: system-app-api # 路由的编号
+ *           uri: grayLb://system-server
+ *           predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
+ *             - Path=/app-api/system/**
+ *           filters:
+ *               - RewritePath=/app-api/system/v3/api-docs, /v3/api-docs
+ *
  */
 @Validated
 public class RouteDefinition {
 
 	private String id;
 
+	/**
+	 * 谓语定义数组
+	 * 请求通过 predicates 判断是否匹配。在 Route 里，PredicateDefinition 转换成 Predicate 。
+	 */
 	@NotEmpty
 	@Valid
 	private List<PredicateDefinition> predicates = new ArrayList<>();
 
+	/**
+	 * 过滤器定义数组
+	 * 在 Route 里，FilterDefinition 转换成 GatewayFilter 。
+	 */
 	@Valid
 	private List<FilterDefinition> filters = new ArrayList<>();
 
+	/**
+	 * 路由向的 URI
+	 */
 	@NotNull
 	private URI uri;
 
@@ -57,6 +73,7 @@ public class RouteDefinition {
 	private int order = 0;
 
 	public RouteDefinition() {
+
 	}
 
 	public RouteDefinition(String text) {

@@ -13,6 +13,16 @@
 	<properties>
 	</properties>
 
+	<!--
+	定位：官方示例工程
+作用：包含大量可运行的网关示例代码，比如：
+路由配置（YAML/Java 代码）
+自定义过滤器
+负载均衡
+请求 / 响应修改（你之前写的 ModifyRequestBody 就在这里）
+学习价值：直接运行里面的 Demo，验证你之前的路由配置，解决 503 等问题。
+	-->
+
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-gateway</artifactId>

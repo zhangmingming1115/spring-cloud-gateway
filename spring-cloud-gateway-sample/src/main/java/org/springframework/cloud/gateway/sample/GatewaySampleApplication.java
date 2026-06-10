@@ -1,19 +1,3 @@
-/*
- * Copyright 2013-2019 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.springframework.cloud.gateway.sample;
 
 import java.util.Map;
@@ -38,12 +22,35 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 
 /**
  * @author Spencer Gibb
+ *
+ * 执行 main 方法，启动 Spring Boot 应用；
+ * 解析启动类上的 @SpringBootApplication，拆分为三大核心能力：
+ * @SpringBootConfiguration：将启动类作为配置类，支持 @Bean；
+ * @ComponentScan：扫描项目内所有业务组件（Controller/Service 等），存入容器；
+ * @EnableAutoConfiguration：读取框架预定义的自动配置文件，根据依赖自动装配底层组件（网关、Web、连接池等）；
+ * 所有 Bean 初始化完成，容器启动完毕，应用对外提供服务。
+ *
+ * @Import 是 Spring 官方注解，作用只有一个：
+ * 把指定的类导入 Spring 容器，让 Spring 管理它。
+ * 它能导入 3 种东西：
+ * 普通配置类 @Configuration
+ * ImportSelector（动态返回要加载的类全限定名） ← 你这个就是这种！
+ * ImportBeanDefinitionRegistrar（手动注册 Bean）
+ *
  */
-@SpringBootConfiguration
-@EnableAutoConfiguration
+@SpringBootConfiguration   // 标记这是 SpringBoot 配置类，与 @Configuration 没有区别
+@EnableAutoConfiguration   // 开启自动配置
 @Import(AdditionalRoutesImportSelector.class)
 public class GatewaySampleApplication {
 
+	/**
+	 * Spring 启动时执行流程：
+	 * 扫描到 @Import
+	 * 实例化 AdditionalRoutesImportSelector
+	 * 调用它的 selectImports () 方法
+	 * 拿到返回的字符串数组（类全名）
+	 * 把这些类全部注册成 Bean
+	 */
 	public static final String HELLO_FROM_FAKE_ACTUATOR_METRICS_GATEWAY_REQUESTS = "hello from fake /actuator/metrics/spring.cloud.gateway.requests";
 
 	@Value("${test.uri:http://httpbin.org:80}")
