@@ -155,22 +155,27 @@ import org.springframework.web.reactive.socket.server.support.HandshakeWebSocket
 import org.springframework.web.reactive.socket.server.upgrade.ReactorNettyRequestUpgradeStrategy;
 
 /**
- * @author Spencer Gibb
- * @author Ziemowit Stolarczyk
- * @author Mete Alpaslan Katırcıoğlu
- * @author Alberto C. Ríos
- */
-
-/**
  *
  * @EnableConfigurationProperties = 让配置类（@ConfigurationProperties）生效，把配置注入 Spring 容器
  * 它的使命只有一个：
  * 把 application.yml/application.properties 里的配置，自动读出来，绑定到 Java 类里，并交给 Spring 管理。
  *
+ *
+ *
+ * Spring Cloud Gateway 核心配置类，初始化如下 ：
+ *
+ * NettyConfiguration
+ * GlobalFilter
+ * FilteringWebHandler
+ * GatewayProperties
+ * PrefixPathGatewayFilterFactory
+ * RoutePredicateFactory
+ * RouteDefinitionLocator
+ * RouteLocator
+ * RoutePredicateHandlerMapping
+ * GatewayWebfluxEndpoint
+ *
  */
-
-
-
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = "spring.cloud.gateway.enabled", matchIfMissing = true)
 @EnableConfigurationProperties
@@ -189,6 +194,14 @@ public class GatewayAutoConfiguration {
 		return new RouteLocatorBuilder(context);
 	}
 
+	/**
+	 * @ConditionalOnMissingBean
+	 * 仅当容器中不存在同类型 Bean 时，才执行当前方法、创建这个 Bean。
+	 * 含义：允许自定义扩展
+	 * 你自己代码中如果手动定义了 PropertiesRouteDefinitionLocator，框架就不会创建这个默认实现；
+	 * 没自定义，才使用框架默认的配置路由解析器。
+	 * 典型设计：框架提供默认实现，业务可按需覆盖。
+	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public PropertiesRouteDefinitionLocator propertiesRouteDefinitionLocator(GatewayProperties properties) {
@@ -201,6 +214,12 @@ public class GatewayAutoConfiguration {
 		return new InMemoryRouteDefinitionRepository();
 	}
 
+	/**
+	 * @Primary 当一个接口 / 类在容器中存在多个实例时，标注了 @Primary 的 Bean 会成为首选 Bean，默认被自动注入。
+	 * 同类型有多个 Bean → 不加任何注解：Spring 抛 NoUniqueBeanDefinitionException（找到多个候选，不知道注入哪个）
+	 * 其中一个 Bean 加 @Primary → 优先注入它，冲突解决
+	 * @Primary 优先级 < @Qualifier（精准按名称指定）
+	 */
 	@Bean
 	@Primary
 	public RouteDefinitionLocator routeDefinitionLocator(List<RouteDefinitionLocator> routeDefinitionLocators) {
@@ -246,6 +265,13 @@ public class GatewayAutoConfiguration {
 		return new GlobalCorsProperties();
 	}
 
+	/**
+	 * @ConditionalOnMissingBean
+	 * 条件注解：
+	 * 容器中不存在该类型 Bean时，才创建框架默认实现；
+	 * 如果你手动自定义 RoutePredicateHandlerMapping，框架默认 Bean 会失效。
+	 * 设计目的：保留扩展入口，允许业务重写路由匹配逻辑。
+	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public RoutePredicateHandlerMapping routePredicateHandlerMapping(FilteringWebHandler webHandler,
@@ -355,6 +381,22 @@ public class GatewayAutoConfiguration {
 		return new ForwardPathFilter();
 	}
 
+	/**
+	 * @ConditionalOnEnabledGlobalFilter(WebsocketRoutingFilter.class)
+	 * 仅当全局过滤器 WebsocketRoutingFilter 被 “启用” 时，才创建当前这个 Bean（通常是它自己或者相关配置）。
+	 * 专门用来控制某个 GlobalFilter 是否生效：
+	 * 按配置开关决定是否注册该过滤器，Gateway 内置全局过滤器都用它来做 “可关闭”
+	 *
+	 * spring:
+	 *   cloud:
+	 *     gateway:
+	 *       filter:
+	 *         websocket-routing:
+	 *           enabled: true  # 默认 true；设为 false 则禁用 WebsocketRoutingFilter
+	 *
+	 * 默认 true：启用 WebSocket 路由转发
+	 * 设为 false：网关不再处理 ws/wss 请求，直接走普通 HTTP 链。
+	 */
 	@Bean
 	@ConditionalOnEnabledGlobalFilter(WebsocketRoutingFilter.class)
 	public WebSocketService webSocketService(RequestUpgradeStrategy requestUpgradeStrategy) {
